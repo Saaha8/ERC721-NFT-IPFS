@@ -1,0 +1,32 @@
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.1;
+
+import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
+import "@openzeppelin/contracts/utils/Counters.sol";
+
+contract HarddiskCafe is ERC721URIStorage{
+    using Counters for Counters.Counter;
+    Counters.Counter private _tokenIds;
+    mapping(string => uint8) hashes;
+    
+    constructor() ERC721("HarddiskCafe", "HDC") {}
+  
+  
+    function createNTF(address recipient, string memory hash, string memory metadata) public returns (uint256){
+    
+        require(hashes[hash] != 1, 'hash exists!');
+        hashes[hash] = 1;
+        _tokenIds.increment();
+        uint256 newTokenId = _tokenIds.current();
+        _mint(recipient, newTokenId); 
+        _setTokenURI(newTokenId, metadata);
+        
+        return newTokenId;
+    }
+
+  
+    function getNTF(uint256 tokenId) public view returns (string memory){
+        require(_exists(tokenId), 'token not exists!');
+        return tokenURI(tokenId);
+    }
+}
